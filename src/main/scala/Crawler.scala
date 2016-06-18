@@ -25,11 +25,8 @@ object Crawler {
 
 //    links.foreach(println)
 
-    val regex = "/fa/news/[0-9]+/.*".r
-
     val newsLinkElements = linkElements.toSet
       .filter(_.attr("href").contains("/fa/news/"))
-      .filter(link => regex.pattern.matcher(link.attr("href")).matches)
     println(s"printing ${newsLinkElements.size} links")
 
     val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
