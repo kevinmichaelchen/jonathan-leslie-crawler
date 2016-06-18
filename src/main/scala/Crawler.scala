@@ -27,12 +27,14 @@ object Crawler {
 
     val newsLinkElements = linkElements.toSet
       .filter(_.attr("href").contains("/fa/news/"))
-    println(s"printing ${newsLinkElements.size} links")
+      .toList
+    println(s"Scraping ${newsLinkElements.size} links")
 
     val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
 
 //    newsLinks.foreach(scrape)
-    scrape(newsLinks.head)
+    scrape(newsLinks(0))
+    scrape(newsLinks(1))
   }
 
   def scrape(url: String): Unit = {

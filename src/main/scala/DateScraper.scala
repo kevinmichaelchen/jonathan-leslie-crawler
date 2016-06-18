@@ -11,7 +11,6 @@ object DateScraper {
     // Persian is RTL language, so we go the other way
     val goodStuff = dateString.substring(dateString.indexOf(":") + 1, dateString.indexOf("-")).trim
 
-    println(s"goodStuff = ${goodStuff}")
     val parts = goodStuff.trim.split(" ").map(_.trim)
 
     Date(parts(0), parts(1), parts(2))
