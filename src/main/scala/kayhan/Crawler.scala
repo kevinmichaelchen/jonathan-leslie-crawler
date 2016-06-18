@@ -1,3 +1,5 @@
+package kayhan
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -14,9 +16,6 @@ object Crawler {
       "israel" -> "اسرائیل",
       "zionist" -> "صهیونیستی"
     )
-
-    // http://kayhan.ir/fa/search/2/-1/-1/50/%D8%A7%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%D9%84?from=1392/07/06&to=1395/03/30
-    // http://kayhan.ir/fa/search/2/-1/-1/50/اسرائیل?from=1392/07/06&to=1395/03/30
 
     val baseUrl = "http://kayhan.ir"
     val url = s"${baseUrl}/fa/search"
