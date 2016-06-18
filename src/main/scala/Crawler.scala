@@ -33,8 +33,8 @@ object Crawler {
     val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
 
 //    newsLinks.foreach(scrape)
-    scrape(newsLinks(0))
-    scrape(newsLinks(1))
+    // Scrape first couple
+    newsLinks.slice(0, 5).foreach(scrape)
   }
 
   def scrape(url: String): Unit = {
@@ -44,12 +44,16 @@ object Crawler {
     val date = doc.select("div[class='news_nav news_pdate_c']").text()
 
     val d = DateScraper.parseKayhanDate(date)
-    println(s"  DAY: ${d.day}")
-    println(s"MONTH: ${d.month}")
-    println(s" YEAR: ${d.year}")
+    println(s"     DAY: ${d.day}")
+    println(s"   MONTH: ${d.month}")
+    println(s"    YEAR: ${d.year}")
 
     val title = doc.select("div[class='title']").text()
-    println(s"TITLE: ${title}")
+    println(s"   TITLE: ${title}")
+
+    var subtitle = doc.select("div[class='subtitle']").text()
+    subtitle = if (subtitle.trim.isEmpty) "EMPTY" else subtitle
+    println(s"SUBTITLE: ${subtitle}")
 
     println("")
   }
