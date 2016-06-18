@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
 /**
   * @author Kevin Chen
   */
-object Crawler {
+object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
   def main(args: Array[String]): Unit = {
@@ -70,7 +70,7 @@ object Crawler {
 
     val date = doc.select("div[class='news_nav news_pdate_c']").text()
 
-    val d = DateScraper.parseKayhanDate(date)
+    val d = KayhanDateParser.parseKayhanDate(date)
     println(s"     DAY: ${d.day}")
     println(s"   MONTH: ${d.month}")
     println(s"    YEAR: ${d.year}")

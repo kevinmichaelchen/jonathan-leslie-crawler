@@ -4,7 +4,7 @@ package kayhan
   * @author Kevin Chen
   */
 case class Date(day: String, month: String, year: String)
-object DateScraper {
+object KayhanDateParser {
 
   def parseKayhanDate(dateString: String): Date = {
 
