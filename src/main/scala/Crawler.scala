@@ -11,10 +11,13 @@ class Crawler {
 
 object Crawler {
   def main(args: Array[String]): Unit = {
+    val israelSearchTerm = "اسرائیل"
+    val zionistSearchTerm = "صهیونیستی"
+
     val url = "http://kayhan.ir/fa/search"
     println(s"Hitting ${url}")
     var doc = Jsoup.connect(url)
-      .data("query", "اسرائیل")
+      .data("query", israelSearchTerm)
       .post()
     println("Got text:")
     println(doc.text())
