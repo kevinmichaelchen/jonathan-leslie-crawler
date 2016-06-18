@@ -1,4 +1,5 @@
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 
 import scala.collection.JavaConversions._
@@ -37,9 +38,21 @@ object Crawler {
 //    newsLinks.slice(0, 2).foreach(scrape)
 
     // Go to the next page
-    val paginationElements = doc.select("div[class='pagination'] > a")
+    val nextPageRelativeUrl = getNextPageHref(doc)
+  }
+
+  def getNextPageHref(doc: Document): Option[String] = {
+    val paginationElements = doc.select("div[class='pagination'] > *")
     println(s"Found ${paginationElements.size()} pagination elements")
     paginationElements.foreach(println)
+    val spanIndex = paginationElements.indexWhere(_.tagName.equals("span"))
+    if (spanIndex != -1) {
+      val nextPage = paginationElements.drop(spanIndex).filter(_.tagName.equals("a")).head
+      println(s"Next page: ${nextPage}")
+      Some(nextPage.attr("href"))
+    } else {
+      None
+    }
   }
 
   def scrape(url: String): Unit = {
