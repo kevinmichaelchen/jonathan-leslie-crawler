@@ -9,8 +9,11 @@ import scala.collection.JavaConversions._
   */
 object Crawler {
   def main(args: Array[String]): Unit = {
-    val israelSearchTerm = "اسرائیل"
-    val zionistSearchTerm = "صهیونیستی"
+
+    val searchTerms: Map[String, String] = Map(
+      "israel" -> "اسرائیل",
+      "zionist" -> "صهیونیستی"
+    )
 
     // http://kayhan.ir/fa/search/2/-1/-1/50/%D8%A7%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%D9%84?from=1392/07/06&to=1395/03/30
     // http://kayhan.ir/fa/search/2/-1/-1/50/اسرائیل?from=1392/07/06&to=1395/03/30
@@ -20,7 +23,7 @@ object Crawler {
     println(s"Hitting ${url}")
 
     val doc = Jsoup.connect(url)
-      .data("query", israelSearchTerm)
+      .data("query", searchTerms.get("israel").get)
       .data("rpp", "50")
       .post()
 
