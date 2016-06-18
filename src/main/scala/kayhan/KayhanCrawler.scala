@@ -12,18 +12,23 @@ import scala.collection.JavaConversions._
 object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
+  val ARTICLES_TO_SCRAPE_PER_PAGE = 1
+
+  var numScrapedPages = 0
+  var numScrapedArticles = 0
+
   def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
-      "israel" -> "اسرائیل",
-      "zionist" -> "صهیونیستی"
+      "israel" -> "اسرائیل"
+//      "zionist" -> "صهیونیستی"
     )
 
     searchTerms foreach {
-      case (k,v) => crawl(k, v)
+      case (k, v) => startCrawl(k, v, 1)
     }
   }
 
-  def crawl(englishSearchTerm: String, searchTerm: String): Unit = {
+  def startCrawl(englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
 
     val url = s"${BASE_URL}/fa/search"
     println(s"Hitting ${url}")
@@ -33,6 +38,35 @@ object KayhanCrawler {
       .data("rpp", "50")
       .post()
 
+    scrapeArticlesOnPage(doc)
+    crawlNextPage(doc, englishSearchTerm, searchTerm, pageNumber)
+  }
+
+  def crawlNextPage(doc: Document, englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
+    if (numScrapedArticles > 5) return
+
+    // TODO delete this when we're all done
+    val nextPageRelativeUrl = getNextPageHref(doc)
+    if (nextPageRelativeUrl.isDefined) {
+      numScrapedPages += 1
+      crawlRecursive(englishSearchTerm, searchTerm, nextPageRelativeUrl.get, pageNumber + 1)
+    } else {
+      println("Done crawling...")
+    }
+  }
+
+  def crawlRecursive(englishSearchTerm: String, searchTerm: String, pageUrl: String, currentPageNumber: Int): Unit = {
+    // Get doc
+    // http://kayhan.ir/fa/search/2/-1/-1/50/اسرائیل?from=1392/07/06&to=1395/03/30
+    val url = BASE_URL + pageUrl
+
+    println(s"Getting ${url}")
+    val doc = Jsoup.connect(url).post()
+    scrapeArticlesOnPage(doc)
+    crawlNextPage(doc, englishSearchTerm, searchTerm, currentPageNumber)
+  }
+
+  def scrapeArticlesOnPage(doc: Document): Unit = {
     // Get links for scraping
     val linkElements: Elements = doc.select("a[href]")
     val newsLinkElements = linkElements.toSet
@@ -41,13 +75,11 @@ object KayhanCrawler {
     println(s"Scraping ${newsLinkElements.size} links")
     val newsLinks = newsLinkElements.map(BASE_URL + _.attr("href"))
 
+    // TODO put back when we're ready
     // Scrape all news articles on this page
     //    newsLinks.foreach(scrape)
     // Scrape first couple
-    //    newsLinks.slice(0, 2).foreach(scrape)
-
-    // Go to the next page
-    val nextPageRelativeUrl = getNextPageHref(doc)
+    newsLinks.slice(0, ARTICLES_TO_SCRAPE_PER_PAGE).foreach(scrape)
   }
 
   def getNextPageHref(doc: Document): Option[String] = {
@@ -86,5 +118,7 @@ object KayhanCrawler {
     println(s"    BODY: ${body}")
 
     println("")
+
+    numScrapedArticles += 1
   }
 }
