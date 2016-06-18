@@ -38,16 +38,17 @@ object Crawler {
   def scrape(url: String): Unit = {
     println(s"Scraping ${url}")
     val doc = Jsoup.connect(url).get()
-    val date = doc.select("div[class='news_nav news_pdate_c']")
 
-    // TODO    println(date.text())
+    val date = doc.select("div[class='news_nav news_pdate_c']").text()
 
-    val d = DateScraper.parseKayhanDate(date.text())
-    println(s"Day ${d.day}")
-    println(s"Month ${d.month}")
-    println(s"Year ${d.year}")
+    val d = DateScraper.parseKayhanDate(date)
+    println(s"  DAY: ${d.day}")
+    println(s"MONTH: ${d.month}")
+    println(s" YEAR: ${d.year}")
 
-//    val dateTerms = parseDate(date.first().text())
-//    println(s"Day ${dateTerms(0)} Month ${dateTerms(1)} Year ${dateTerms(2)}")
+    val title = doc.select("div[class='title']").text()
+    println(s"TITLE: ${title}")
+
+    println("")
   }
 }
