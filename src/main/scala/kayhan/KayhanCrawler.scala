@@ -12,15 +12,16 @@ import scala.collection.JavaConversions._
 object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
+  // debug variables
   val ARTICLES_TO_SCRAPE_PER_PAGE = 1
-
+  val TOTAL_NUMBER_ARTICLES_TO_SCRAPE_BEFORE_ABORTING = 3
   var numScrapedPages = 0
   var numScrapedArticles = 0
 
   def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
-      "israel" -> "اسرائیل"
-//      "zionist" -> "صهیونیستی"
+      "israel" -> "اسرائیل",
+      "zionist" -> "صهیونیستی"
     )
 
     searchTerms foreach {
@@ -43,8 +44,9 @@ object KayhanCrawler {
   }
 
   def crawlNextPage(doc: Document, englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
-    if (numScrapedArticles > 5) return
+    if (numScrapedArticles > TOTAL_NUMBER_ARTICLES_TO_SCRAPE_BEFORE_ABORTING) return
 
+    println(s"Crawling page ${pageNumber} of results for '${englishSearchTerm}'")
     // TODO delete this when we're all done
     val nextPageRelativeUrl = getNextPageHref(doc)
     if (nextPageRelativeUrl.isDefined) {
@@ -115,7 +117,7 @@ object KayhanCrawler {
     println(s"SUBTITLE: ${subtitle}")
 
     val body = doc.select("div[class='body']").text()
-    println(s"    BODY: ${body}")
+    //println(s"    BODY: ${body}")
 
     println("")
 
