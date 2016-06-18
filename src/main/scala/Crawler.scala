@@ -6,13 +6,8 @@ import scala.collection.JavaConversions._
 /**
   * @author Kevin Chen
   */
-class Crawler {
-
-}
-
 object Crawler {
   def main(args: Array[String]): Unit = {
-
     val israelSearchTerm = "اسرائیل"
     val zionistSearchTerm = "صهیونیستی"
 
@@ -47,6 +42,15 @@ object Crawler {
     println(s"Scraping ${url}")
     val doc = Jsoup.connect(url).get()
     val date = doc.select("div[class='news_nav news_pdate_c']")
-    println(s"Found date ${date.text()}")
+
+    // TODO    println(date.text())
+
+    val d = DateScraper.parseKayhanDate(date.text())
+    println(s"Day ${d.day}")
+    println(s"Month ${d.month}")
+    println(s"Year ${d.year}")
+
+//    val dateTerms = parseDate(date.first().text())
+//    println(s"Day ${dateTerms(0)} Month ${dateTerms(1)} Year ${dateTerms(2)}")
   }
 }
