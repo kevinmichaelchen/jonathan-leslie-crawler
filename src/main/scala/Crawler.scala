@@ -11,28 +11,35 @@ object Crawler {
     val israelSearchTerm = "اسرائیل"
     val zionistSearchTerm = "صهیونیستی"
 
+    // http://kayhan.ir/fa/search/2/-1/-1/50/%D8%A7%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%D9%84?from=1392/07/06&to=1395/03/30
+    // http://kayhan.ir/fa/search/2/-1/-1/50/اسرائیل?from=1392/07/06&to=1395/03/30
+
     val baseUrl = "http://kayhan.ir"
     val url = s"${baseUrl}/fa/search"
     println(s"Hitting ${url}")
+
     val doc = Jsoup.connect(url)
       .data("query", israelSearchTerm)
       .data("rpp", "50")
       .post()
 
+    // Get links for scraping
     val linkElements: Elements = doc.select("a[href]")
-
-//    links.foreach(println)
-
     val newsLinkElements = linkElements.toSet
       .filter(_.attr("href").contains("/fa/news/"))
       .toList
     println(s"Scraping ${newsLinkElements.size} links")
-
     val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
 
+    // Scrape all news articles on this page
 //    newsLinks.foreach(scrape)
     // Scrape first couple
-    newsLinks.slice(0, 2).foreach(scrape)
+//    newsLinks.slice(0, 2).foreach(scrape)
+
+    // Go to the next page
+    val paginationElements = doc.select("div[class='pagination'] > a")
+    println(s"Found ${paginationElements.size()} pagination elements")
+    paginationElements.foreach(println)
   }
 
   def scrape(url: String): Unit = {
