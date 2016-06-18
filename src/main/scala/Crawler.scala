@@ -18,8 +18,6 @@ object Crawler {
       .data("query", israelSearchTerm)
       .data("rpp", "50")
       .post()
-    println("Got text:")
-    println(doc.text())
 
     val linkElements: Elements = doc.select("a[href]")
 
@@ -34,7 +32,7 @@ object Crawler {
 
 //    newsLinks.foreach(scrape)
     // Scrape first couple
-    newsLinks.slice(0, 5).foreach(scrape)
+    newsLinks.slice(0, 2).foreach(scrape)
   }
 
   def scrape(url: String): Unit = {
@@ -54,6 +52,9 @@ object Crawler {
     var subtitle = doc.select("div[class='subtitle']").text()
     subtitle = if (subtitle.trim.isEmpty) "EMPTY" else subtitle
     println(s"SUBTITLE: ${subtitle}")
+
+    val body = doc.select("div[class='body']").text()
+    println(s"    BODY: ${body}")
 
     println("")
   }
