@@ -10,19 +10,26 @@ import scala.collection.JavaConversions._
   * @author Kevin Chen
   */
 object Crawler {
-  def main(args: Array[String]): Unit = {
+  val BASE_URL = "http://kayhan.ir"
 
+  def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
       "israel" -> "اسرائیل",
       "zionist" -> "صهیونیستی"
     )
 
-    val baseUrl = "http://kayhan.ir"
-    val url = s"${baseUrl}/fa/search"
+    searchTerms foreach {
+      case (k,v) => crawl(k, v)
+    }
+  }
+
+  def crawl(englishSearchTerm: String, searchTerm: String): Unit = {
+
+    val url = s"${BASE_URL}/fa/search"
     println(s"Hitting ${url}")
 
     val doc = Jsoup.connect(url)
-      .data("query", searchTerms.get("israel").get)
+      .data("query", searchTerm)
       .data("rpp", "50")
       .post()
 
@@ -32,12 +39,12 @@ object Crawler {
       .filter(_.attr("href").contains("/fa/news/"))
       .toList
     println(s"Scraping ${newsLinkElements.size} links")
-    val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
+    val newsLinks = newsLinkElements.map(BASE_URL + _.attr("href"))
 
     // Scrape all news articles on this page
-//    newsLinks.foreach(scrape)
+    //    newsLinks.foreach(scrape)
     // Scrape first couple
-//    newsLinks.slice(0, 2).foreach(scrape)
+    //    newsLinks.slice(0, 2).foreach(scrape)
 
     // Go to the next page
     val nextPageRelativeUrl = getNextPageHref(doc)
