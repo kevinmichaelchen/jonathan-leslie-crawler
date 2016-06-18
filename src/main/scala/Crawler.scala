@@ -26,18 +26,27 @@ object Crawler {
     println("Got text:")
     println(doc.text())
 
-    val links: Elements = doc.select("a[href]")
+    val linkElements: Elements = doc.select("a[href]")
 
 //    links.foreach(println)
 
     val regex = "/fa/news/[0-9]+/.*".r
 
-    val newsLinks = links.toSet
+    val newsLinkElements = linkElements.toSet
       .filter(_.attr("href").contains("/fa/news/"))
       .filter(link => regex.pattern.matcher(link.attr("href")).matches)
-    println(s"printing ${newsLinks.size} links")
-    newsLinks.map(_.attr("href")).foreach(println)
+    println(s"printing ${newsLinkElements.size} links")
 
+    val newsLinks = newsLinkElements.map(baseUrl + _.attr("href"))
 
+//    newsLinks.foreach(scrape)
+    scrape(newsLinks.head)
+  }
+
+  def scrape(url: String): Unit = {
+    println(s"Scraping ${url}")
+    val doc = Jsoup.connect(url).get()
+    val date = doc.select("div[class='news_nav news_pdate_c']")
+    println(s"Found date ${date.text()}")
   }
 }
