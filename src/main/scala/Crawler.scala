@@ -12,6 +12,7 @@ class Crawler {
 
 object Crawler {
   def main(args: Array[String]): Unit = {
+
     val israelSearchTerm = "اسرائیل"
     val zionistSearchTerm = "صهیونیستی"
 
@@ -26,7 +27,14 @@ object Crawler {
     println(doc.text())
 
     val links: Elements = doc.select("a[href]")
-    val newsLinks = links.toSet.filter(_.attr("href").contains("/fa/news/"))
+
+//    links.foreach(println)
+
+    val regex = "/fa/news/[0-9]+/.*".r
+
+    val newsLinks = links.toSet
+      .filter(_.attr("href").contains("/fa/news/"))
+      .filter(link => regex.pattern.matcher(link.attr("href")).matches)
     println(s"printing ${newsLinks.size} links")
     newsLinks.map(_.attr("href")).foreach(println)
 
