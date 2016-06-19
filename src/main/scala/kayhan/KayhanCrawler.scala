@@ -11,6 +11,9 @@ import scala.collection.JavaConversions._
   */
 case class ScrapeCount(var count: Int, limit: Int)
 
+case class Article(day: String, month: String, year: String,
+                   title: String, subtitle: String, body: String)
+
 object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
@@ -110,22 +113,26 @@ object KayhanCrawler {
     println(s"Scraping ${url}")
     val doc = Jsoup.connect(url).get()
 
-    val date = doc.select("div[class='news_nav news_pdate_c']").text()
+    val dateString = doc.select("div[class='news_nav news_pdate_c']").text()
+    val date = KayhanDateParser.parseKayhanDate(dateString)
 
-    val d = KayhanDateParser.parseKayhanDate(date)
-    println(s"     DAY: ${d.day}")
-    println(s"   MONTH: ${d.month}")
-    println(s"    YEAR: ${d.year}")
-
+    val day = date.day
+    val month = date.month
+    val year = date.year
     val title = doc.select("div[class='title']").text()
-    println(s"   TITLE: ${title}")
-
     var subtitle = doc.select("div[class='subtitle']").text()
     subtitle = if (subtitle.trim.isEmpty) "EMPTY" else subtitle
-    println(s"SUBTITLE: ${subtitle}")
 
     val body = doc.select("div[class='body']").text()
+
+    println(s"     DAY: ${day}")
+    println(s"   MONTH: ${month}")
+    println(s"    YEAR: ${year}")
+    println(s"   TITLE: ${title}")
+    println(s"SUBTITLE: ${subtitle}")
     //println(s"    BODY: ${body}")
+
+    MongoPersister.persist(Article(day, month, year, title, subtitle, body))
 
     println(s"Prev count for ${englishSearchTerm}: ${SCRAPE_COUNTS.get(englishSearchTerm).get.count}")
     SCRAPE_COUNTS.get(englishSearchTerm).get.count += 1
