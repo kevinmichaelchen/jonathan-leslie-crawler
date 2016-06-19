@@ -1,6 +1,9 @@
+# Background
+...
+
 # Getting started
 ## Installing Dependencies
-This project requires [Scala](http://www.scala-lang.org/) and [MongoDB](https://www.mongodb.com/)
+This project requires [Scala](http://www.scala-lang.org/) and [MongoDB](https://www.mongodb.com/).
 ```bash
 # installing mongo can take a while
 brew install scala mongodb
@@ -19,7 +22,7 @@ db.kayhan_article.find().pretty()
 
 ### To JSON
 ```bash
-mongoexport --db jonathan_leslie --collection kayhan_article --out article.json
+mongoexport --db jonathan_leslie --collection kayhan_article --pretty --out article.json
 ```
 
 ### To CSV
