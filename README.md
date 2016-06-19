@@ -1,7 +1,7 @@
 # Getting started
 ## Installing Dependencies
 This project requires [Scala](http://www.scala-lang.org/) and [MongoDB](https://www.mongodb.com/)
-```
+```bash
 # installing mongo can take a while
 brew install scala mongodb
 

@@ -12,14 +12,15 @@ object MongoPersister {
   val database: MongoDatabase = mongoClient.getDatabase("jonathan_leslie")
   val collection: MongoCollection[Document] = database.getCollection("kayhan_article");
 
-  def persist(article: Article): Unit = {
+  def persist(article: Article, url: String): Unit = {
     val doc: Document = Document(
       "day" -> article.day,
       "month" -> article.month,
       "year" -> article.year,
       "title" -> article.title,
       "subtitle" -> article.subtitle,
-      "body" -> article.body
+      "body" -> article.body,
+      "url" -> url
     )
 
     // The insert operation won't occur until we subscribe

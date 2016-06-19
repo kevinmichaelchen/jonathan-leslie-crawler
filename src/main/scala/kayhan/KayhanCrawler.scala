@@ -132,7 +132,7 @@ object KayhanCrawler {
     println(s"SUBTITLE: ${subtitle}")
     //println(s"    BODY: ${body}")
 
-    MongoPersister.persist(Article(day, month, year, title, subtitle, body))
+    MongoPersister.persist(Article(day, month, year, title, subtitle, body), url)
 
     println(s"Prev count for ${englishSearchTerm}: ${SCRAPE_COUNTS.get(englishSearchTerm).get.count}")
     SCRAPE_COUNTS.get(englishSearchTerm).get.count += 1
