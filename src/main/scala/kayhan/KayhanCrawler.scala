@@ -9,14 +9,19 @@ import scala.collection.JavaConversions._
 /**
   * @author Kevin Chen
   */
+case class ScrapeCount(var count: Int, limit: Int)
+
 object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
   // debug variables
   val ARTICLES_TO_SCRAPE_PER_PAGE = 1
-  val TOTAL_NUMBER_ARTICLES_TO_SCRAPE_BEFORE_ABORTING = 3
   var numScrapedPages = 0
-  var numScrapedArticles = 0
+
+  val SCRAPE_COUNTS: Map[String, ScrapeCount] = Map(
+    "israel" -> ScrapeCount(0, 3),
+    "zionist" -> ScrapeCount(0, 3)
+  )
 
   def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
@@ -39,12 +44,15 @@ object KayhanCrawler {
       .data("rpp", "50")
       .post()
 
-    scrapeArticlesOnPage(doc)
+    scrapeArticlesOnPage(doc, englishSearchTerm)
     crawlNextPage(doc, englishSearchTerm, searchTerm, pageNumber)
   }
 
   def crawlNextPage(doc: Document, englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
-    if (numScrapedArticles > TOTAL_NUMBER_ARTICLES_TO_SCRAPE_BEFORE_ABORTING) return
+    if (SCRAPE_COUNTS.get(englishSearchTerm).get.count > SCRAPE_COUNTS.get(englishSearchTerm).get.limit) {
+      println(s"You've scraped enough articles. Unable to scrape page ${pageNumber} for ${englishSearchTerm}")
+      return
+    }
 
     println(s"Crawling page ${pageNumber} of results for '${englishSearchTerm}'")
     // TODO delete this when we're all done
@@ -64,11 +72,11 @@ object KayhanCrawler {
 
     println(s"Getting ${url}")
     val doc = Jsoup.connect(url).post()
-    scrapeArticlesOnPage(doc)
+    scrapeArticlesOnPage(doc, englishSearchTerm)
     crawlNextPage(doc, englishSearchTerm, searchTerm, currentPageNumber)
   }
 
-  def scrapeArticlesOnPage(doc: Document): Unit = {
+  def scrapeArticlesOnPage(doc: Document, englishSearchTerm: String): Unit = {
     // Get links for scraping
     val linkElements: Elements = doc.select("a[href]")
     val newsLinkElements = linkElements.toSet
@@ -81,7 +89,7 @@ object KayhanCrawler {
     // Scrape all news articles on this page
     //    newsLinks.foreach(scrape)
     // Scrape first couple
-    newsLinks.slice(0, ARTICLES_TO_SCRAPE_PER_PAGE).foreach(scrape)
+    newsLinks.slice(0, ARTICLES_TO_SCRAPE_PER_PAGE).foreach(scrape(_, englishSearchTerm))
   }
 
   def getNextPageHref(doc: Document): Option[String] = {
@@ -98,7 +106,7 @@ object KayhanCrawler {
     }
   }
 
-  def scrape(url: String): Unit = {
+  def scrape(url: String, englishSearchTerm: String): Unit = {
     println(s"Scraping ${url}")
     val doc = Jsoup.connect(url).get()
 
@@ -119,8 +127,10 @@ object KayhanCrawler {
     val body = doc.select("div[class='body']").text()
     //println(s"    BODY: ${body}")
 
-    println("")
+    println(s"Prev count for ${englishSearchTerm}: ${SCRAPE_COUNTS.get(englishSearchTerm).get.count}")
+    SCRAPE_COUNTS.get(englishSearchTerm).get.count += 1
+    println(s"Curr count for ${englishSearchTerm}: ${SCRAPE_COUNTS.get(englishSearchTerm).get.count}")
 
-    numScrapedArticles += 1
+    println("")
   }
 }
