@@ -14,3 +14,15 @@ Entering `mongo` in Terminal will put you in a mongo shell
 use jonathan_leslie
 db.kayhan_article.find().pretty()
 ```
+
+## Exporting scraped data
+
+### To JSON
+```bash
+mongoexport --db jonathan_leslie --collection kayhan_article --out article.json
+```
+
+### To CSV
+```bash
+mongoexport --db jonathan_leslie --collection kayhan_article --csv --fields day,month,year,title,subtitle,body,url --out article.csv
+```
