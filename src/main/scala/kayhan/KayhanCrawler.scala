@@ -66,6 +66,10 @@ object KayhanCrawler {
       crawlRecursive(englishSearchTerm, searchTerm, nextPageRelativeUrl.get, pageNumber + 1)
     } else {
       println("Done crawling...")
+      println(s"Scraped ${numScrapedPages} pages.")
+      for ((searchTerm, scrapeCount) <- SCRAPE_COUNTS) {
+        println(s"Scraped ${scrapeCount.count} pages for '${searchTerm}'")
+      }
     }
   }
 
