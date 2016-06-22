@@ -22,8 +22,8 @@ object KayhanCrawler {
   var numScrapedPages = 0
 
   val SCRAPE_COUNTS: Map[String, ScrapeCount] = Map(
-    "israel" -> ScrapeCount(0, Some(3)),
-    "zionist" -> ScrapeCount(0, Some(3))
+    "israel" -> ScrapeCount(0, None),
+    "zionist" -> ScrapeCount(0, None)
   )
 
   def main(args: Array[String]): Unit = {
