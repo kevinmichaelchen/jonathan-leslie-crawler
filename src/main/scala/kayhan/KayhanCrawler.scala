@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
 /**
   * @author Kevin Chen
   */
-case class ScrapeCount(var count: Int, limit: Int)
+case class ScrapeCount(var count: Int, limit: Option[Int])
 
 case class Article(day: String, month: String, year: String,
                    title: String, subtitle: String, body: String)
@@ -22,8 +22,8 @@ object KayhanCrawler {
   var numScrapedPages = 0
 
   val SCRAPE_COUNTS: Map[String, ScrapeCount] = Map(
-    "israel" -> ScrapeCount(0, 3),
-    "zionist" -> ScrapeCount(0, 3)
+    "israel" -> ScrapeCount(0, Some(3)),
+    "zionist" -> ScrapeCount(0, Some(3))
   )
 
   def main(args: Array[String]): Unit = {
@@ -52,7 +52,8 @@ object KayhanCrawler {
   }
 
   def crawlNextPage(doc: Document, englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
-    if (SCRAPE_COUNTS.get(englishSearchTerm).get.count > SCRAPE_COUNTS.get(englishSearchTerm).get.limit) {
+    val limit = SCRAPE_COUNTS.get(englishSearchTerm).get.limit
+    if (limit.isDefined && SCRAPE_COUNTS.get(englishSearchTerm).get.count > limit.get) {
       println(s"You've scraped enough articles. Unable to scrape page ${pageNumber} for ${englishSearchTerm}")
       return
     }
