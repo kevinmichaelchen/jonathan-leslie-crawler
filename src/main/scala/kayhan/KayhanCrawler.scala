@@ -93,7 +93,7 @@ object KayhanCrawler {
     val newsLinks = newsLinkElements.map(BASE_URL + _.attr("href"))
 
     // Scrape all news articles on this page
-    newsLinks.foreach(scrape(_, englishSearchTerm))
+    newsLinks.foreach(tryScrape(_, englishSearchTerm))
 
     // Useful for debugging: here we slice the list so we only scrape the first couple articles on a page
     // newsLinks.slice(0, 2).foreach(scrape(_, englishSearchTerm))
@@ -110,6 +110,14 @@ object KayhanCrawler {
       Some(nextPage.attr("href"))
     } else {
       None
+    }
+  }
+
+  def tryScrape(url: String, englishSearchTerm: String): Unit = {
+    try {
+      scrape(url, englishSearchTerm)
+    } catch {
+      case e: Exception => e.printStackTrace()
     }
   }
 
