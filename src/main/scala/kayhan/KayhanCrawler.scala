@@ -28,8 +28,8 @@ object KayhanCrawler {
 
   def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
-      "israel" -> "اسرائیل",
-      "zionist" -> "صهیونیستی"
+      "israel" -> "اسرائیل"
+//      "zionist" -> "صهیونیستی"
     )
 
     searchTerms foreach {

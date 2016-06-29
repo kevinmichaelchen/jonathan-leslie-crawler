@@ -21,6 +21,8 @@ use jonathan_leslie
 db.kayhan_article.find().pretty()
 ```
 
+To wipe your DB, you'd run `db.kayhan_article.deleteMany({})`
+
 ## Exporting scraped data
 
 ### To JSON
