@@ -18,7 +18,6 @@ object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
   // debug variables
-  val ARTICLES_TO_SCRAPE_PER_PAGE = 1
   var numScrapedPages = 0
 
   val SCRAPE_COUNTS: Map[String, ScrapeCount] = Map(
@@ -93,11 +92,11 @@ object KayhanCrawler {
     println(s"Scraping ${newsLinkElements.size} links")
     val newsLinks = newsLinkElements.map(BASE_URL + _.attr("href"))
 
-    // TODO put back when we're ready
     // Scrape all news articles on this page
-    //    newsLinks.foreach(scrape)
-    // Scrape first couple
-    newsLinks.slice(0, ARTICLES_TO_SCRAPE_PER_PAGE).foreach(scrape(_, englishSearchTerm))
+    newsLinks.foreach(scrape(_, englishSearchTerm))
+
+    // Useful for debugging: here we slice the list so we only scrape the first couple articles on a page
+    // newsLinks.slice(0, 2).foreach(scrape(_, englishSearchTerm))
   }
 
   def getNextPageHref(doc: Document): Option[String] = {
