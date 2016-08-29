@@ -9,24 +9,26 @@ import scala.collection.JavaConversions._
 /**
   * @author Kevin Chen
   */
-case class ScrapeCount(var count: Int, limit: Int)
+case class ScrapeCount(var count: Int, limit: Option[Int])
+
+case class Article(day: String, month: String, year: String,
+                   title: String, subtitle: String, body: String)
 
 object KayhanCrawler {
   val BASE_URL = "http://kayhan.ir"
 
   // debug variables
-  val ARTICLES_TO_SCRAPE_PER_PAGE = 1
   var numScrapedPages = 0
 
   val SCRAPE_COUNTS: Map[String, ScrapeCount] = Map(
-    "israel" -> ScrapeCount(0, 3),
-    "zionist" -> ScrapeCount(0, 3)
+    "israel" -> ScrapeCount(0, None),
+    "zionist" -> ScrapeCount(0, None)
   )
 
   def main(args: Array[String]): Unit = {
     val searchTerms: Map[String, String] = Map(
-      "israel" -> "اسرائیل",
-      "zionist" -> "صهیونیستی"
+      "israel" -> "اسرائیل"
+//      "zionist" -> "صهیونیستی"
     )
 
     searchTerms foreach {
@@ -49,7 +51,8 @@ object KayhanCrawler {
   }
 
   def crawlNextPage(doc: Document, englishSearchTerm: String, searchTerm: String, pageNumber: Int): Unit = {
-    if (SCRAPE_COUNTS.get(englishSearchTerm).get.count > SCRAPE_COUNTS.get(englishSearchTerm).get.limit) {
+    val limit = SCRAPE_COUNTS.get(englishSearchTerm).get.limit
+    if (limit.isDefined && SCRAPE_COUNTS.get(englishSearchTerm).get.count > limit.get) {
       println(s"You've scraped enough articles. Unable to scrape page ${pageNumber} for ${englishSearchTerm}")
       return
     }
@@ -62,6 +65,10 @@ object KayhanCrawler {
       crawlRecursive(englishSearchTerm, searchTerm, nextPageRelativeUrl.get, pageNumber + 1)
     } else {
       println("Done crawling...")
+      println(s"Scraped ${numScrapedPages} pages.")
+      for ((searchTerm, scrapeCount) <- SCRAPE_COUNTS) {
+        println(s"Scraped ${scrapeCount.count} pages for '${searchTerm}'")
+      }
     }
   }
 
@@ -85,11 +92,11 @@ object KayhanCrawler {
     println(s"Scraping ${newsLinkElements.size} links")
     val newsLinks = newsLinkElements.map(BASE_URL + _.attr("href"))
 
-    // TODO put back when we're ready
     // Scrape all news articles on this page
-    //    newsLinks.foreach(scrape)
-    // Scrape first couple
-    newsLinks.slice(0, ARTICLES_TO_SCRAPE_PER_PAGE).foreach(scrape(_, englishSearchTerm))
+    newsLinks.foreach(tryScrape(_, englishSearchTerm))
+
+    // Useful for debugging: here we slice the list so we only scrape the first couple articles on a page
+    // newsLinks.slice(0, 2).foreach(scrape(_, englishSearchTerm))
   }
 
   def getNextPageHref(doc: Document): Option[String] = {
@@ -106,26 +113,38 @@ object KayhanCrawler {
     }
   }
 
+  def tryScrape(url: String, englishSearchTerm: String): Unit = {
+    try {
+      scrape(url, englishSearchTerm)
+    } catch {
+      case e: Exception => e.printStackTrace()
+    }
+  }
+
   def scrape(url: String, englishSearchTerm: String): Unit = {
     println(s"Scraping ${url}")
     val doc = Jsoup.connect(url).get()
 
-    val date = doc.select("div[class='news_nav news_pdate_c']").text()
+    val dateString = doc.select("div[class='news_nav news_pdate_c']").text()
+    val date = KayhanDateParser.parseKayhanDate(dateString)
 
-    val d = KayhanDateParser.parseKayhanDate(date)
-    println(s"     DAY: ${d.day}")
-    println(s"   MONTH: ${d.month}")
-    println(s"    YEAR: ${d.year}")
-
+    val day = date.day
+    val month = date.month
+    val year = date.year
     val title = doc.select("div[class='title']").text()
-    println(s"   TITLE: ${title}")
-
     var subtitle = doc.select("div[class='subtitle']").text()
     subtitle = if (subtitle.trim.isEmpty) "EMPTY" else subtitle
-    println(s"SUBTITLE: ${subtitle}")
 
     val body = doc.select("div[class='body']").text()
+
+    println(s"     DAY: ${day}")
+    println(s"   MONTH: ${month}")
+    println(s"    YEAR: ${year}")
+    println(s"   TITLE: ${title}")
+    println(s"SUBTITLE: ${subtitle}")
     //println(s"    BODY: ${body}")
+
+    MongoPersister.persist(Article(day, month, year, title, subtitle, body), url)
 
     println(s"Prev count for ${englishSearchTerm}: ${SCRAPE_COUNTS.get(englishSearchTerm).get.count}")
     SCRAPE_COUNTS.get(englishSearchTerm).get.count += 1
