@@ -33,6 +33,7 @@ object Links {
     appendField(sb, link.field, 0)
 
     sb.append(s"&sort=${link.sort}")
+    sb.append("&maxresults=50")
     sb.toString()
   }
 
@@ -204,49 +205,49 @@ object Links {
   )
 
   def main(args: Array[String]): Unit = {
-    var expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=YMD_date&val1=&sort=YMD_date%3AD"
+    var expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=YMD_date&val1=&sort=YMD_date%3AD&maxresults=50"
     var actual = formatUrl(jerusalemPostIranArticles)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=Section&val1=OPINION&sort=YMD_date%3AD"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=Section&val1=OPINION&sort=YMD_date%3AD&maxresults=50"
     actual = formatUrl(jerusalemPostIranOpinion)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=Section&val1=OPINION&bln2=AND&fld2=alltext&val2=nuclear&sort=YMD_date%3AD"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIsrael%2Band%2BPalestinian%2BTerritories%21Israel%2Band%2BPalestinian%2BTerritories%2Fpubname%3AJERB%21Jerusalem%2BPost%252C%2BThe%2B%2528Israel%2529&fld0=alltext&val0=iran&bln1=AND&fld1=Section&val1=OPINION&bln2=AND&fld2=alltext&val2=nuclear&sort=YMD_date%3AD&maxresults=50"
     actual = formatUrl(jerusalemPostIranNuclearOpinion)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3ATRTB%21Tehran%2BTimes%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3ATRTB%21Tehran%2BTimes%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA&maxresults=50"
     actual = formatUrl(tehranTimesIsraelZionistArticles)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3ATRTB%21Tehran%2BTimes%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=AND&fld1=Section&val1=Opinion&sort=YMD_date%3AA"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3ATRTB%21Tehran%2BTimes%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=AND&fld1=Section&val1=Opinion&sort=YMD_date%3AA&maxresults=50"
     actual = formatUrl(tehranTimesIsraelOpinion)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AIRNB%21Iran%2BNews%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AIRNB%21Iran%2BNews%2B%2528Iran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA&maxresults=50"
     actual = formatUrl(iranNewsIsraelZionistArticles)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AIID7%21Iran%2BDaily%2B%2528Tehran%252C%2BIran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AIID7%21Iran%2BDaily%2B%2528Tehran%252C%2BIran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA&maxresults=50"
     actual = formatUrl(iranDailyIsraelZionistArticles)
     println(expected)
     println(actual)
     println(expected equals actual)
 
-    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AMNAT%21Moj%2BNews%2BAgency%2B%2528Tehran%252C%2BIran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA"
+    expected = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/search/nb?p=AWNB&b=results&action=search&t=continent%3AMiddle%2BEast%21Middle%2BEast%2Fcountry%3AIran%21Iran%2Fpubname%3AMNAT%21Moj%2BNews%2BAgency%2B%2528Tehran%252C%2BIran%2529&fld0=alltext&val0=israel&bln1=OR&fld1=alltext&val1=zionist&sort=YMD_date%3AA&maxresults=50"
     actual = formatUrl(mojNewsIsraelZionistArticles)
     println(expected)
     println(actual)
