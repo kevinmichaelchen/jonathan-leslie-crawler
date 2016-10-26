@@ -46,6 +46,7 @@ object Main {
       if (numArticlesScraped != 0) {
         return
       }
+      // TODO try catch
       scrapeArticle(BASE_URL + href, cookie)
     }
 
@@ -65,11 +66,22 @@ object Main {
     val doc = get(articleLink, cookie)
     val docHtml = doc.select("div.nb-doc")
 
-    val title = docHtml.select("div.title h2")
+    val titleElement = docHtml.select("div.title h2")
+    val title = titleElement.text()
 
-    val source = docHtml.select("div.source")
+    val sourceElement = docHtml.select("div.source")
+    val sourceText = sourceElement.text()
+    val split = sourceText.split("-")
+    val source = split(0).trim
+    val dateRegex = "(.*\\d\\d\\d\\d)(.*)".r
+    val date = dateRegex.findFirstMatchIn(split(1).trim).get.group(1)
+
+
     println(doc)
     numArticlesScraped += 1
+    println(s"Source: ${source}")
+    println(s"Title: ${title}")
+    println(s"Date: ${date}")
     println(articleLink)
   }
 
