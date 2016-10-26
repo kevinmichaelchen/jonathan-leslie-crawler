@@ -79,12 +79,20 @@ object Main {
     val dateRegex = "(.*\\d\\d\\d\\d)(.*)".r
     val date = dateRegex.findFirstMatchIn(split(1).trim).get.group(1)
 
+    val moreDetailsElement = docHtml.select("div.moredetails")
+    val authorBylineElement = moreDetailsElement.select("li.author").select("span.val")
+    val authorBylineText = authorBylineElement.text()
+    val authorBylineSplit = authorBylineText.split("/")
+    val author = authorBylineSplit(0)
+    val byline = authorBylineSplit(1)
 
     numArticlesScraped += 1
     println(s"Text: ${articleText}")
     println(s"Source: ${source}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
+    println(s"Author: ${author}")
+    println(s"Byline: ${byline}")
     println(articleLink)
   }
 
