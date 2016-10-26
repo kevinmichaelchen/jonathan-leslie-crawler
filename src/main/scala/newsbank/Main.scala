@@ -86,6 +86,9 @@ object Main {
     val author = authorBylineSplit(0)
     val byline = authorBylineSplit(1)
 
+    val sectionElement = moreDetailsElement.select("li.section").select("span.val")
+    val section = sectionElement.text()
+
     numArticlesScraped += 1
     println(s"Text: ${articleText}")
     println(s"Source: ${source}")
@@ -93,6 +96,7 @@ object Main {
     println(s"Date: ${date}")
     println(s"Author: ${author}")
     println(s"Byline: ${byline}")
+    println(s"Section: ${section}")
     println(articleLink)
   }
 
