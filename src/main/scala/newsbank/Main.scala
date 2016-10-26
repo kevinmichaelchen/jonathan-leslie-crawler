@@ -66,6 +66,9 @@ object Main {
     val doc = get(articleLink, cookie)
     val docHtml = doc.select("div.nb-doc")
 
+    val articleTextElement = docHtml.select("div.body")
+    val articleText = articleTextElement.text()
+
     val titleElement = docHtml.select("div.title h2")
     val title = titleElement.text()
 
@@ -77,8 +80,8 @@ object Main {
     val date = dateRegex.findFirstMatchIn(split(1).trim).get.group(1)
 
 
-    println(doc)
     numArticlesScraped += 1
+    println(s"Text: ${articleText}")
     println(s"Source: ${source}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
