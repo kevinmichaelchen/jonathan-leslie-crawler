@@ -82,9 +82,18 @@ object Main {
     val moreDetailsElement = docHtml.select("div.moredetails")
     val authorBylineElement = moreDetailsElement.select("li.author").select("span.val")
     val authorBylineText = authorBylineElement.text()
-    val authorBylineSplit = authorBylineText.split("/")
-    val author = authorBylineSplit(0)
-    val byline = authorBylineSplit(1)
+//    println(s"authorBylineText: ${authorBylineText}")
+
+    var author: Option[String] = None
+    var byline: Option[String] = None
+
+    if (authorBylineText.contains("/")) {
+      val authorBylineSplit = authorBylineText.split("/")
+      author = Some(authorBylineSplit(0))
+      byline = Some(authorBylineSplit(1))
+    } else {
+      author = Some(authorBylineText.trim)
+    }
 
     val sectionElement = moreDetailsElement.select("li.section").select("span.val")
     val section = sectionElement.text()
@@ -94,7 +103,7 @@ object Main {
     println(s"Source: ${source}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
-    println(s"Author: ${author}")
+    println(s"Author: ${author.get}")
     println(s"Byline: ${byline}")
     println(s"Section: ${section}")
     println(articleLink)
