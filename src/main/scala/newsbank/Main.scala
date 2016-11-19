@@ -36,7 +36,7 @@ object Main {
     val articleLinks = doc.select("a.nb-doc-link").asScala
     for( articleLink <- articleLinks ) {
       val href = articleLink.attr("href")
-      if (numArticlesScraped > 50) {
+      if (numArticlesScraped > 20) {
         return
       }
       // TODO try catch

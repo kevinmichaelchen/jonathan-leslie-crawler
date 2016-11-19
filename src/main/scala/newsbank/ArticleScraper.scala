@@ -1,6 +1,6 @@
 package newsbank
 
-import newsbank.parse.{ArticleDateParser, ArticleTextParser, ArticleTitleParser}
+import newsbank.parse._
 
 /**
   * @author Kevin Chen
@@ -20,30 +20,14 @@ object ArticleScraper {
 
     val date = ArticleDateParser.parseDate(docHtml)
 
-    val moreDetailsElement = docHtml.select("div.moredetails")
-    val authorBylineElement = moreDetailsElement.select("li.author").select("span.val")
-    val authorBylineText = authorBylineElement.text()
+    val author: Author = ArticleAuthorParser.parseAuthor(docHtml)
 
-    var author: Option[String] = None
-    var byline: Option[String] = None
-
-    if (authorBylineText.contains("/")) {
-      val authorBylineSplit = authorBylineText.split("/")
-      author = Some(authorBylineSplit(0))
-      byline = Some(authorBylineSplit(1))
-    } else {
-      author = Some(authorBylineText.trim)
-    }
-
-    val sectionElement = moreDetailsElement.select("li.section").select("span.val")
-    val section = sectionElement.text()
+    val section = ArticleSectionParser.parseSection(docHtml)
 
     Main.numArticlesScraped += 1
-//    println(s"Text: ${articleText}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
-    println(s"Author: ${author.get}")
-    println(s"Byline: ${byline}")
+    println(s"Author: ${author}")
     println(s"Section: ${section}")
     println(articleLink)
   }
