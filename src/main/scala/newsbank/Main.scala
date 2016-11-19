@@ -8,9 +8,6 @@ import newsbank.Links.formatUrl
 /**
   * @author Kevin Chen
   */
-class Main {
-}
-
 object Main {
 
   // TODO enable when ready to scrape multiple pages
@@ -39,7 +36,7 @@ object Main {
     val articleLinks = doc.select("a.nb-doc-link").asScala
     for( articleLink <- articleLinks ) {
       val href = articleLink.attr("href")
-      if (numArticlesScraped != 0) {
+      if (numArticlesScraped > 50) {
         return
       }
       // TODO try catch

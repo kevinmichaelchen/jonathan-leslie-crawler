@@ -1,5 +1,7 @@
 package newsbank
 
+import newsbank.parse.{ArticleDateParser, ArticleTextParser, ArticleTitleParser}
+
 /**
   * @author Kevin Chen
   */
@@ -8,19 +10,15 @@ object ArticleScraper {
   def scrapeArticle(articleLink: String, cookie: String): Unit = {
     val doc = HttpGetter.get(articleLink, cookie)
     val docHtml = doc.select("div.nb-doc")
+    if (docHtml.isEmpty) {
+      throw new IllegalStateException(s"div.nb-doc not found on article: ${articleLink}")
+    }
 
-    val articleTextElement = docHtml.select("div.body")
-    val articleText = articleTextElement.text()
+    val articleText = ArticleTextParser.parseText(docHtml)
 
-    val titleElement = docHtml.select("div.title h2")
-    val title = titleElement.text()
+    val title = ArticleTitleParser.parseTitle(docHtml)
 
-    val sourceElement = docHtml.select("div.source")
-    val sourceText = sourceElement.text()
-    val split = sourceText.split("-")
-    val source = split(0).trim
-    val dateRegex = "(.*\\d\\d\\d\\d)(.*)".r
-    val date = dateRegex.findFirstMatchIn(split(1).trim).get.group(1)
+    val date = ArticleDateParser.parseDate(docHtml)
 
     val moreDetailsElement = docHtml.select("div.moredetails")
     val authorBylineElement = moreDetailsElement.select("li.author").select("span.val")
@@ -41,8 +39,7 @@ object ArticleScraper {
     val section = sectionElement.text()
 
     Main.numArticlesScraped += 1
-    println(s"Text: ${articleText}")
-    println(s"Source: ${source}")
+//    println(s"Text: ${articleText}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
     println(s"Author: ${author.get}")
