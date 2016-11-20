@@ -5,6 +5,7 @@ version := "1.0"
 scalaVersion := "2.11.8"
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.9.2"
+libraryDependencies += "mysql" % "mysql-connector-java" % "6.0.5"
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "1.1.1"
 
 // set the main class for 'sbt run'
