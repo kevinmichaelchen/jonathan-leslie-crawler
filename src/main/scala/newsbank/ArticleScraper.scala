@@ -16,7 +16,7 @@ object ArticleScraper {
     val author: Author = article.author
 
     val statement = connection.createStatement
-    val rs = statement.executeQuery(
+    val rs = statement.executeUpdate(
       s"""
         |INSERT INTO `article` (`title`, `articleText`, `section`, `author`, `url`, `publishedDate`, `newspaper_id`)
         |VALUES
