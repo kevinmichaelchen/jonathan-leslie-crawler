@@ -51,6 +51,8 @@ object ArticleScraper {
     println(s"Section: ${section}")
     println(s"Link: ${articleLink}")
 
-    Article(articleText, source, title, date, author, section, articleLink)
+    // Assume all article URLs start with http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/doc/nb/news/
+    val articleSlug = articleLink.substring(articleLink.lastIndexOf("/") + 1)
+    Article(articleText, source, title, date, author, section, articleSlug)
   }
 }
