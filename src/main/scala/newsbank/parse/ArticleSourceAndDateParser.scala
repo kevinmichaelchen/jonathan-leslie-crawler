@@ -19,8 +19,9 @@ object ArticleSourceAndDateParser {
     val date = dateRegex.findFirstMatchIn(split(1).trim).get.group(1)
 
     // Format it as 2016-11-20 12:06:00
+    val sqlDate = reformatDateToSqlFormat(date)
 
-    (source, date)
+    (source, sqlDate)
   }
 
   def reformatDateToSqlFormat(date_s: String) = {
