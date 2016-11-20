@@ -44,12 +44,11 @@ object ArticleScraper {
 
     val section = ArticleSectionParser.parseSection(docHtml)
 
-    println(s"Source: ${source}")
+    println(s"Link: ${articleLink}")
     println(s"Title: ${title}")
     println(s"Date: ${date}")
     println(s"Author: ${author}")
-    println(s"Section: ${section}")
-    println(s"Link: ${articleLink}")
+    println("")
 
     // Assume all article URLs start with http://infoweb.newsbank.com.ezproxy.soas.ac.uk/resources/doc/nb/news/
     val articleSlug = articleLink.substring(articleLink.lastIndexOf("/") + 1)
