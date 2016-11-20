@@ -3,7 +3,7 @@
 Kayhan is an Iranian newspaper. Scraping was relatively straight-forward. Took a day.
 
 ## Newsbank
-Newsbank is SAML-secured, but we boot on implementing the whole dance to retrieve the ezproxy cookie and simply supply the cookie ahead of time in a properties file.
+Newsbank is SAML-secured, but we circumvent the dance with Shibboleth by supplying the `ezproxy` cookie ahead of time in a properties file.
 
 ```mysql
 CREATE TABLE `newspaper` (
