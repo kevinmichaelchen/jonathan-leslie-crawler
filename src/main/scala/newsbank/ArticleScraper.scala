@@ -1,29 +1,37 @@
 package newsbank
 
+import java.sql.Connection
+
 import newsbank.parse._
-import java.sql.{Connection}
 
 /**
   * @author Kevin Chen
   */
 object ArticleScraper {
 
-  def scrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int): Unit = {
-    // TODO try catch
-    val article = scrapeArticle(articleLink, cookie)
+  def scrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int): Boolean = {
+    try {
+      val article = scrapeArticle(articleLink, cookie)
 
-    val author: Author = article.author
+      val author: Author = article.author
 
-    val byline = if (author.byline.isDefined) s"'${author.byline.get}'" else "NULL"
+      val byline = if (author.byline.isDefined) s"'${author.byline.get}'" else "NULL"
 
-    val statement = connection.createStatement
-    val rs = statement.executeUpdate(
-      s"""
-        |INSERT INTO `article` (`title`, `articleText`, `section`, `author`, `byline`, `url`, `publishedDate`, `newspaper_id`)
-        |VALUES
-        |	('${article.title}', '${article.text}', '${article.section}', '${author.name}', ${byline}, '${article.url}', '${article.date}', ${newspaperID});
+      val statement = connection.createStatement
+      val rs = statement.executeUpdate(
+        s"""
+           |INSERT INTO `article` (`title`, `articleText`, `section`, `author`, `byline`, `url`, `publishedDate`, `newspaper_id`)
+           |VALUES
+           |	('${article.title}', '${article.text}', '${article.section}', '${author.name}', ${byline}, '${article.url}', '${article.date}', ${newspaperID});
       """.stripMargin
-    )
+      )
+    } catch {
+      case e: Exception => {
+        // TODO log to error.log
+        return false
+      }
+    }
+    true
   }
 
   def scrapeArticle(articleLink: String, cookie: String): Article = {

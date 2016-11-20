@@ -35,10 +35,17 @@ object Main {
   def main(args: Array[String]): Unit = {
     val cookie = getCookie()
     println(cookie)
-    scrape(formatUrl(Links.jerusalemPostIranArticles), cookie)
+
+    // TODO do not hard-code
+    val link = Links.jerusalemPostIranArticles
+
+    // TODO do not hard-code
+    val newspaperID = 1
+
+    scrape(formatUrl(link), cookie, newspaperID)
   }
 
-  def scrape(link: String, cookie: String): Unit = {
+  def scrape(link: String, cookie: String, newspaperID: Int): Unit = {
     val doc = HttpGetter.get(link, cookie)
 
     // Scrape articles
@@ -47,17 +54,16 @@ object Main {
     // TODO renew connection
     var connection: Connection = createNewsbankJdbcConnection
 
-    // TODO do not hard-code
-    var newspaperID = 1
-
     for (articleLink <- articleLinks) {
       val href = articleLink.attr("href")
       if (numArticlesScraped > 5) {
         connection.close()
         return
       }
-      ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID)
-      numArticlesScraped += 1
+      val success = ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID)
+      if (success) {
+        numArticlesScraped += 1
+      }
     }
 
     // Go to the next page
@@ -68,7 +74,7 @@ object Main {
     } else {
       val nextLink = nextLinkElement.attr("href")
       println(nextLink)
-      if (RECURSE) scrape(BASE_URL + nextLink, cookie)
+      if (RECURSE) scrape(BASE_URL + nextLink, cookie, newspaperID)
     }
   }
 
