@@ -1,5 +1,7 @@
 package newsbank.parse
 
+import java.text.SimpleDateFormat
+
 import org.jsoup.select.Elements
 
 /**
@@ -21,7 +23,15 @@ object ArticleSourceAndDateParser {
     (source, date)
   }
 
-  def main(args: Array[String]): Unit = {
+  def reformatDateToSqlFormat(date_s: String) = {
+    val dt = new SimpleDateFormat("MMMM dd, yyyy")
+    val date = dt.parse(date_s)
+    val dt1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+    dt1.format(date)
+  }
 
+  def main(args: Array[String]): Unit = {
+    val date_s = "November 14, 2016"
+    println(reformatDateToSqlFormat(date_s))
   }
 }
