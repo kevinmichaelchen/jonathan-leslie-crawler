@@ -17,6 +17,7 @@ CREATE TABLE `article` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `articleText` mediumtext NOT NULL,
   `section` varchar(50) NOT NULL,
+  `byline` varchar(50) NOT NULL,
   `author` varchar(255) NOT NULL,
   `url` varchar(255) NOT NULL,
   `publishedDate` datetime NOT NULL,
