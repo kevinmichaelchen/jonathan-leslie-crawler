@@ -1,5 +1,6 @@
 package newsbank
 
+import java.io.File
 import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
@@ -37,15 +38,14 @@ object Main {
     println(cookie)
 
     // TODO do not hard-code
-    val link = Links.jerusalemPostIranArticles
-
-    // TODO do not hard-code
     val newspaperID = 1
+    val link = Links.jerusalemPostIranArticles
+    val errorLog = new File("jerusalemPostIranArticles.log")
 
-    scrape(formatUrl(link), cookie, newspaperID)
+    scrape(formatUrl(link), cookie, newspaperID, errorLog)
   }
 
-  def scrape(link: String, cookie: String, newspaperID: Int): Unit = {
+  def scrape(link: String, cookie: String, newspaperID: Int, errorLog: File): Unit = {
     val doc = HttpGetter.get(link, cookie)
 
     // Scrape articles
@@ -60,7 +60,7 @@ object Main {
         connection.close()
         return
       }
-      val success = ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID)
+      val success = ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID, errorLog)
       if (success) {
         numArticlesScraped += 1
       }
@@ -74,7 +74,7 @@ object Main {
     } else {
       val nextLink = nextLinkElement.attr("href")
       println(nextLink)
-      if (RECURSE) scrape(BASE_URL + nextLink, cookie, newspaperID)
+      if (RECURSE) scrape(BASE_URL + nextLink, cookie, newspaperID, errorLog)
     }
   }
 

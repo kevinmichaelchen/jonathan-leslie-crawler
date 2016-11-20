@@ -1,15 +1,18 @@
 package newsbank
 
+import java.io.File
+import java.nio.charset.StandardCharsets
 import java.sql.Connection
 
 import newsbank.parse._
+import org.apache.commons.io.FileUtils
 
 /**
   * @author Kevin Chen
   */
 object ArticleScraper {
 
-  def scrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int): Boolean = {
+  def scrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int, errorLog: File): Boolean = {
     try {
       val article = scrapeArticle(articleLink, cookie)
 
@@ -28,6 +31,7 @@ object ArticleScraper {
     } catch {
       case e: Exception => {
         // TODO log to error.log
+        FileUtils.write(errorLog, e.getStackTrace.map(_.), StandardCharsets.UTF_8, true)
         return false
       }
     }
