@@ -1,9 +1,11 @@
 package newsbank
 
+import java.sql.{Connection, DriverManager}
 import java.util.Properties
-import scala.collection.JavaConverters._
 
 import newsbank.Links.formatUrl
+
+import scala.collection.JavaConverters._
 
 /**
   * @author Kevin Chen
@@ -23,6 +25,13 @@ object Main {
     cookie
   }
 
+  def getJdbcPassword() = {
+    val prop = new Properties()
+    prop.load(getClass.getResourceAsStream("/secrets.properties"))
+    val jdbcPassword = prop.getProperty("jdbcPassword")
+    jdbcPassword
+  }
+
   def main(args: Array[String]): Unit = {
     val cookie = getCookie()
     println(cookie)
@@ -34,13 +43,21 @@ object Main {
 
     // Scrape articles
     val articleLinks = doc.select("a.nb-doc-link").asScala
-    for( articleLink <- articleLinks ) {
+
+    // TODO renew connection
+    var connection: Connection = createNewsbankJdbcConnection
+
+    // TODO do not hard-code
+    var newspaperID = 1
+
+    for (articleLink <- articleLinks) {
       val href = articleLink.attr("href")
-      if (numArticlesScraped > 20) {
+      if (numArticlesScraped > 5) {
+        connection.close()
         return
       }
-      // TODO try catch
-      ArticleScraper.scrapeArticle(BASE_URL + href, cookie)
+      ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID)
+      numArticlesScraped += 1
     }
 
     // Go to the next page
@@ -53,5 +70,15 @@ object Main {
       println(nextLink)
       if (RECURSE) scrape(BASE_URL + nextLink, cookie)
     }
+  }
+
+  def createNewsbankJdbcConnection = {
+    val url = "jdbc:mysql://localhost:3306/newsbank"
+    val driver = "com.mysql.jdbc.Driver"
+    val username = "root"
+    val password = getJdbcPassword()
+    Class.forName(driver)
+    var connection: Connection = DriverManager.getConnection(url, username, password)
+    connection
   }
 }
