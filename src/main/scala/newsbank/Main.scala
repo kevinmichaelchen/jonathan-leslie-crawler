@@ -56,22 +56,11 @@ object Main {
     // Scrape articles
     val articleLinks = doc.select("a.nb-doc-link").asScala
 
-    // TODO renew connection
     var connection: Connection = createNewsbankJdbcConnection
 
     for (articleLink <- articleLinks) {
       val href = articleLink.attr("href")
-      if (numArticlesScraped % 5 == 0) {
-        // No need to commit since JDBC connection is in auto-commit mode by default
-        connection.close()
-        connection = createNewsbankJdbcConnection
-      }
-      if (numArticlesScraped > 15) {
-        FileUtils.write(errorLog, "closing connection\n", StandardCharsets.UTF_8, true)
-        // No need to commit since JDBC connection is in auto-commit mode by default
-        connection.close()
-        return
-      }
+
       val success = ArticleScraper.tryScrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID, errorLog)
       if (success) {
         numArticlesScraped += 1
@@ -86,7 +75,12 @@ object Main {
     } else {
       val nextLink = nextLinkElement.attr("href")
       println(nextLink)
-      if (RECURSE) scrape(BASE_URL + nextLink, cookie, newspaperID, errorLog)
+      if (RECURSE) {
+        // No need to commit since JDBC connection is in auto-commit mode by default
+        connection.close()
+
+        scrape(BASE_URL + nextLink, cookie, newspaperID, errorLog)
+      }
     }
   }
 
