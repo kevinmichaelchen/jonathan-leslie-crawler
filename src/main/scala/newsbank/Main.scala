@@ -61,8 +61,14 @@ object Main {
 
     for (articleLink <- articleLinks) {
       val href = articleLink.attr("href")
-      if (numArticlesScraped > 5) {
+      if (numArticlesScraped % 5 == 0) {
+        // No need to commit since JDBC connection is in auto-commit mode by default
+        connection.close()
+        connection = createNewsbankJdbcConnection
+      }
+      if (numArticlesScraped > 15) {
         FileUtils.write(errorLog, "closing connection\n", StandardCharsets.UTF_8, true)
+        // No need to commit since JDBC connection is in auto-commit mode by default
         connection.close()
         return
       }
