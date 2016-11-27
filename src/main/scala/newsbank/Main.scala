@@ -15,11 +15,10 @@ import scala.collection.JavaConverters._
   */
 object Main {
 
-  // TODO enable when ready to scrape multiple pages
-  val RECURSE = false
   val BASE_URL = "http://infoweb.newsbank.com.ezproxy.soas.ac.uk"
 
   var numArticlesScraped = 0
+  var pagesScraped = 0
 
   def getCookie() = {
     val prop = new Properties()
@@ -62,6 +61,7 @@ object Main {
       val href = articleLink.attr("href")
 
       val success = ArticleScraper.tryScrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID, errorLog)
+
       if (success) {
         numArticlesScraped += 1
       }
@@ -75,12 +75,12 @@ object Main {
     } else {
       val nextLink = nextLinkElement.attr("href")
       println(nextLink)
-      if (RECURSE) {
-        // No need to commit since JDBC connection is in auto-commit mode by default
-        connection.close()
 
-        scrape(BASE_URL + nextLink, cookie, newspaperID, errorLog)
-      }
+      // No need to commit since JDBC connection is in auto-commit mode by default
+      connection.close()
+
+      pagesScraped += 1
+      scrape(BASE_URL + nextLink, cookie, newspaperID, errorLog)
     }
   }
 
