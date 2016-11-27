@@ -1,11 +1,10 @@
 package newsbank
 
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.sql.Connection
 
 import newsbank.parse._
-import org.apache.commons.io.FileUtils
+import util.ExceptionFileLogger
 
 /**
   * @author Kevin Chen
@@ -30,8 +29,7 @@ object ArticleScraper {
       )
     } catch {
       case e: Exception => {
-        // TODO log to error.log
-        FileUtils.write(errorLog, e.getStackTrace.map(_.), StandardCharsets.UTF_8, true)
+        ExceptionFileLogger.log(e, errorLog)
         return false
       }
     }
