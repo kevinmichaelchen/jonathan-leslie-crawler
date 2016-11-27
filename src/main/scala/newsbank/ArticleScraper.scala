@@ -4,7 +4,7 @@ import java.io.File
 import java.sql.Connection
 
 import newsbank.parse._
-import util.ExceptionFileLogger
+import util.{ExceptionFileLogger, SqlStringEscaper}
 
 /**
   * @author Kevin Chen
@@ -15,17 +15,20 @@ object ArticleScraper {
     var sql = ""
     try {
       val article = scrapeArticle(articleLink, cookie)
-
       val author: Author = article.author
 
-      val byline = if (author.byline.isDefined) s"'${author.byline.get}'" else "NULL"
+      val articleTitle = SqlStringEscaper.escape(article.title)
+      val articleText = SqlStringEscaper.escape(article.text)
+      val articleSection = SqlStringEscaper.escape(article.section)
+      val articleAuthor = SqlStringEscaper.escape(author.name)
+      val byline = if (author.byline.isDefined) s"'${SqlStringEscaper.escape(author.byline.get)}'" else "NULL"
 
       val statement = connection.createStatement
       sql =
         s"""
            |INSERT INTO `article` (`title`, `articleText`, `section`, `author`, `byline`, `url`, `publishedDate`, `newspaper_id`)
            |VALUES
-           |	('${article.title}', '${article.text}', '${article.section}', '${author.name}', ${byline}, '${article.url}', '${article.date}', ${newspaperID});
+           |	('${articleTitle}', '${articleText}', '${articleSection}', '${articleAuthor}', ${byline}, '${article.url}', '${article.date}', ${newspaperID});
       """.stripMargin
       val rs = statement.executeUpdate(sql)
     } catch {
