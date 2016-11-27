@@ -11,7 +11,7 @@ import util.ExceptionFileLogger
   */
 object ArticleScraper {
 
-  def scrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int, errorLog: File): Boolean = {
+  def tryScrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int, errorLog: File): Boolean = {
     try {
       val article = scrapeArticle(articleLink, cookie)
 

@@ -60,7 +60,7 @@ object Main {
         connection.close()
         return
       }
-      val success = ArticleScraper.scrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID, errorLog)
+      val success = ArticleScraper.tryScrapeAndPersistArticle(BASE_URL + href, cookie, connection, newspaperID, errorLog)
       if (success) {
         numArticlesScraped += 1
       }
