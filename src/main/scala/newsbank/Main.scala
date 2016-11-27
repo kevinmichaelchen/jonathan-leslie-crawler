@@ -1,10 +1,12 @@
 package newsbank
 
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
 import newsbank.Links.formatUrl
+import org.apache.commons.io.FileUtils
 
 import scala.collection.JavaConverters._
 
@@ -42,6 +44,9 @@ object Main {
     val link = Links.jerusalemPostIranArticles
     val errorLog = new File("jerusalemPostIranArticles.log")
 
+    FileUtils.deleteQuietly(errorLog)
+    FileUtils.write(errorLog, "test\n", StandardCharsets.UTF_8, true)
+
     scrape(formatUrl(link), cookie, newspaperID, errorLog)
   }
 
@@ -57,6 +62,7 @@ object Main {
     for (articleLink <- articleLinks) {
       val href = articleLink.attr("href")
       if (numArticlesScraped > 5) {
+        FileUtils.write(errorLog, "closing connection\n", StandardCharsets.UTF_8, true)
         connection.close()
         return
       }

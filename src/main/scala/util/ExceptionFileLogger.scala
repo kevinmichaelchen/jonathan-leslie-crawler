@@ -10,10 +10,20 @@ import org.apache.commons.lang3.exception.ExceptionUtils
   * @author Kevin Chen
   */
 object ExceptionFileLogger {
+
+  def log(string: String, file: File): Unit = {
+    try {
+      FileUtils.write(file, string, StandardCharsets.UTF_8, true)
+    } catch {
+      case e: Exception => {}
+    }
+  }
+
   def log(throwable: Throwable, file: File) {
+
     try {
       val stackTrace = ExceptionUtils.getStackTrace(throwable)
-      FileUtils.write(file, stackTrace, StandardCharsets.UTF_8, true)
+      log(stackTrace, file)
     } catch {
       case e: Exception => {}
     }

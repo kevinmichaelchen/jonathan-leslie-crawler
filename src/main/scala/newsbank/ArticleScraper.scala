@@ -12,6 +12,7 @@ import util.ExceptionFileLogger
 object ArticleScraper {
 
   def tryScrapeAndPersistArticle(articleLink: String, cookie: String, connection: Connection, newspaperID: Int, errorLog: File): Boolean = {
+    var sql = ""
     try {
       val article = scrapeArticle(articleLink, cookie)
 
@@ -20,15 +21,16 @@ object ArticleScraper {
       val byline = if (author.byline.isDefined) s"'${author.byline.get}'" else "NULL"
 
       val statement = connection.createStatement
-      val rs = statement.executeUpdate(
+      sql =
         s"""
            |INSERT INTO `article` (`title`, `articleText`, `section`, `author`, `byline`, `url`, `publishedDate`, `newspaper_id`)
            |VALUES
            |	('${article.title}', '${article.text}', '${article.section}', '${author.name}', ${byline}, '${article.url}', '${article.date}', ${newspaperID});
       """.stripMargin
-      )
+      val rs = statement.executeUpdate(sql)
     } catch {
       case e: Exception => {
+        ExceptionFileLogger.log(s"Error with sql: ${sql}", errorLog)
         ExceptionFileLogger.log(e, errorLog)
         return false
       }
